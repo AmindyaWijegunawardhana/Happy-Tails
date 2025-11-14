@@ -1,54 +1,73 @@
-def DOCKER_HUB_CREDENTIALS = '2698a822-32d0-445d-b52f-e34b87034630'
-def DOCKER_USER = 'amindya'
-def BACKEND_IMAGE = "${DOCKER_USER}/backend-api"
-def FRONTEND_IMAGE = "${DOCKER_USER}/react-app"
-
 pipeline {
     agent any
 
-    environment {
-        BUILD_TAG = "${env.BUILD_NUMBER}"
-    }
-
     stages {
+        stage('Clone Repository') {
+            steps {
+                git branch: 'main', 
+                    url: 'https://github.com/AmindyaWijegunawardhana/Happy-Tails',
+                    credentialsId: '2698a822-32d0-445d-b52f-e34b87034630'
+            }
+        }
 
         stage('Login to Docker Hub') {
             steps {
-                withCredentials([usernamePassword(credentialsId: DOCKER_HUB_CREDENTIALS, 
-                                                  passwordVariable: 'DOCKER_PASSWORD', 
-                                                  usernameVariable: 'DOCKER_USER')]) {
-                    sh "docker login -u ${DOCKER_USER} -p ${DOCKER_PASSWORD}"
+                withCredentials([usernamePassword(
+                    credentialsId: '2698a822-32d0-445d-b52f-e34b87034630', 
+                    usernameVariable: 'DOCKER_USER', 
+                    passwordVariable: 'DOCKER_PASSWORD')]) {
+                    sh '''
+                    echo $DOCKER_PASSWORD | docker login -u $DOCKER_USER --password-stdin
+                    '''
                 }
             }
         }
 
-        stage('Build & Push Backend') {
+        stage('Build Containers') {
             steps {
-                sh """
-                    docker build -t ${BACKEND_IMAGE}:${BUILD_TAG} -t ${BACKEND_IMAGE}:latest ./backend
-                    docker push ${BACKEND_IMAGE}:${BUILD_TAG}
-                    docker push ${BACKEND_IMAGE}:latest
-                """
+                sh '''
+                docker build -t amindya/backend-api:latest ./backend
+                docker build -f ./frontend/Dockerfile -t amindya/react-app:latest ./frontend
+                '''
             }
         }
 
-        stage('Build & Push Frontend') {
+        stage('Push Containers') {
             steps {
-                sh """
-                    docker build -f ./frontend/Dockerfile -t ${FRONTEND_IMAGE}:${BUILD_TAG} -t ${FRONTEND_IMAGE}:latest .
-                    docker push ${FRONTEND_IMAGE}:${BUILD_TAG}
-                    docker push ${FRONTEND_IMAGE}:latest
-                """
+                sh '''
+                docker push amindya/backend-api:latest
+                docker push amindya/react-app:latest
+                '''
             }
         }
 
-        stage('Cleanup') {
+        stage('Run Containers') {
             steps {
-                sh """
-                    docker rmi -f ${BACKEND_IMAGE}:latest || true
-                    docker rmi -f ${FRONTEND_IMAGE}:latest || true
-                """
+                sh '''
+                docker stop backend || true
+                docker rm backend || true
+                docker stop frontend || true
+                docker rm frontend || true
+
+                docker run -d --name backend amindya/backend-api:latest
+                docker run -d --name frontend -p 3000:3000 amindya/react-app:latest
+                '''
             }
+        }
+
+        stage('Verify') {
+            steps {
+                sh 'docker ps -a'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo '✅ Build and deployment successful!'
+        }
+        failure {
+            echo '❌ Build failed!'
         }
     }
 }
