@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React from 'react';
 
 const AuthContext = createContext(null);
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
@@ -7,7 +7,6 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
 
   useEffect(() => {
     // Check if user is logged in
@@ -78,7 +77,6 @@ export function AuthProvider({ children }) {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     setUser(null);
-    navigate('/login');
   };
 
   const getToken = () => {

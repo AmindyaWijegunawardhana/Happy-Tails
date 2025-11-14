@@ -10,6 +10,7 @@ import VaccineCare from './pages/VaccineCare';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import ProtectedRoute from './components/ProtectedRoute';
+import React from 'react';
 
 function AppRoutes() {
   const { isAuthenticated, loading } = useAuth();

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { pets } from '../data/pets'
+import React from 'react';
 
 const Home = () => {
   const [filterType, setFilterType] = useState('All')
