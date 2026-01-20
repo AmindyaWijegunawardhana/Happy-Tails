@@ -1,5 +1,6 @@
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { getPetById } from '../data/pets'
+import React from 'react'
 
 const PetDetails = () => {
   const { id } = useParams()

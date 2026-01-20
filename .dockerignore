@@ -1,11 +1,11 @@
 # Dependencies
-node_modules/
+node_modules
 npm-debug.log
 yarn-error.log
 
 # Build outputs
-dist/
-build/
+dist
+build
 
 # Environment
 .env
@@ -13,8 +13,8 @@ build/
 .env.*.local
 
 # IDE
-.vscode/
-.idea/
+.vscode
+.idea
 *.swp
 *.swo
 
@@ -26,20 +26,10 @@ Thumbs.db
 .git
 .gitignore
 
-# Documentation
-*.md
-docs/
-
 # Testing
-coverage/
-.nyc_output/
+coverage
+.nyc_output
 
 # Misc
-.cache/
-.parcel-cache/
-src/
-public/
-server/
-vite.config.js
-tailwind.config.js
-postcss.config.js
+.cache
+.parcel-cache

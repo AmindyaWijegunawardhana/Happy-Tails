@@ -1,3 +1,4 @@
+import React from "react"
 const About = () => {
   return (
     <div className="bg-secondary min-h-screen py-16">

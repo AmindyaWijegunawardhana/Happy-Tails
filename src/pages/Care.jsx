@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import React from 'react'
 
 const Care = () => {
   const [activeTab, setActiveTab] = useState('dogs')
